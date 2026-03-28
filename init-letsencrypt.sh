@@ -19,7 +19,7 @@ NC='\033[0m'
 
 # 配置
 DOMAIN="xianyu.mosql.com"
-EMAIL=""  # 留空则使用 --register-unsafely-without-email
+EMAIL=""  # 留空则使用 --register-unsafely-without-email（生产环境建议填写邮箱以接收证书过期通知）
 STAGING=0  # 设为1使用Let's Encrypt测试环境（避免频率限制）
 RSA_KEY_SIZE=4096
 
@@ -103,6 +103,7 @@ print_success "已切换到HTTPS nginx配置"
 # 启动nginx（使用临时证书）
 print_info "启动nginx..."
 $COMPOSE_CMD up -d nginx
+# 等待nginx完全启动，确保80端口可响应ACME验证请求
 sleep 3
 
 # 删除临时证书
