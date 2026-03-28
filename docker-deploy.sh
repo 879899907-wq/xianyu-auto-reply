@@ -157,15 +157,18 @@ show_access_info() {
     print_success "🎉 部署完成！"
     echo ""
     
-    if [ "$with_nginx" = "with-nginx" ]; then
-        echo "📱 访问地址:"
-        echo "   HTTP:  http://localhost"
-        echo "   HTTPS: https://localhost (如果配置了SSL)"
-    else
-        echo "📱 访问地址:"
-        echo "   HTTP: http://localhost:8080"
-    fi
+    echo "📱 访问地址:"
+    echo "   HTTP:  http://xianyu.mosql.com"
+    echo "   HTTPS: https://xianyu.mosql.com (需先运行 init-letsencrypt.sh 申请SSL证书)"
+    echo "   本地:  http://localhost:8080"
     
+    echo ""
+    echo "🌐 域名配置:"
+    echo "   请将 xianyu.mosql.com 解析到此服务器IP地址"
+    echo "   DNS解析生效后即可通过域名访问"
+    echo ""
+    echo "🔒 启用HTTPS:"
+    echo "   DNS解析生效后运行: ./init-letsencrypt.sh"
     echo ""
     echo "🔐 默认登录信息:"
     echo "   用户名: admin"

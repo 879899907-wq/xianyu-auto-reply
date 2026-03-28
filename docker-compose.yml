@@ -8,6 +8,8 @@ services:
     restart: unless-stopped
     # 使用root用户避免权限问题
     user: "0:0"
+    # 仅在不使用nginx时直接暴露端口（开发模式）
+    # 生产环境通过nginx反向代理访问，无需直接暴露
     ports:
       - "${WEB_PORT:-8080}:8080"
     volumes:
@@ -76,7 +78,7 @@ services:
           memory: ${MEMORY_RESERVATION:-512}M
           cpus: '${CPU_RESERVATION:-0.5}'
 
-  # 可选：添加Nginx反向代理
+  # Nginx反向代理 - 域名 xianyu.mosql.com
   nginx:
     image: nginx:alpine
     container_name: xianyu-nginx
@@ -86,13 +88,23 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - xianyu-app
     networks:
       - xianyu-network
-    profiles:
-      - with-nginx
+
+  # Certbot - Let's Encrypt SSL证书自动申请与续期
+  certbot:
+    image: certbot/certbot
+    container_name: xianyu-certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt:rw
+      - ./certbot/www:/var/www/certbot:rw
+    # 每12小时检查一次证书是否需要续期
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   xianyu-network:
