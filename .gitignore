@@ -802,3 +802,6 @@ frontend/coverage/
 
 # 临时项目文件夹
 xianyu-auto-reply-self-temp/
+
+# Let's Encrypt SSL证书目录
+certbot/
